@@ -53,12 +53,19 @@
   <audio id="music" src="music.mp3" loop></audio>
 
   <script>
-    // Jouer la musique après le clic
     const audio = document.getElementById("music");
-    document.body.addEventListener("click", () => { 
-      audio.play(); 
-      document.querySelector(".hint").style.display = "none"; 
-    });
+
+    // Fonction pour lancer la musique sur mobile et desktop
+    function playAudio() {
+      audio.play().catch(e => console.log("Audio blocked:", e));
+      document.querySelector(".hint").style.display = "none";
+      // Retire l'écouteur après le premier tap/clic
+      document.body.removeEventListener('click', playAudio);
+      document.body.removeEventListener('touchstart', playAudio);
+    }
+
+    document.body.addEventListener('click', playAudio);
+    document.body.addEventListener('touchstart', playAudio);
 
     // ❤️ HEART CONFETTI
     const canvas = document.getElementById("confetti");
@@ -108,11 +115,25 @@
     }
     animate();
 
-    // Mini-cœurs qui apparaissent au clic
+    // Mini-cœurs qui apparaissent au tap/clic
     document.body.addEventListener('click', (e) => {
       const miniHeart = {
         x: e.clientX,
         y: e.clientY,
+        size: Math.random()*10+5,
+        speed: Math.random()*2+1,
+        drift: Math.random()*2-1,
+        color: `hsl(${Math.random()*360},80%,60%)`,
+        lifetime: 60
+      };
+      hearts.push(miniHeart);
+    });
+
+    document.body.addEventListener('touchstart', (e) => {
+      const touch = e.touches[0];
+      const miniHeart = {
+        x: touch.clientX,
+        y: touch.clientY,
         size: Math.random()*10+5,
         speed: Math.random()*2+1,
         drift: Math.random()*2-1,
