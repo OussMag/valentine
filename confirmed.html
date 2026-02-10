@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>See you on Saturday 😘</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      cursor: pointer;
+    }
+    h1 {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 48px;
+      color: white;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+    .hint {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-size: 16px;
+      opacity: 0.8;
+      z-index: 2;
+    }
+    canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+  </style>
+</head>
+<body>
+  <h1>See you on Saturday 😘</h1>
+  <div class="hint">Tap anywhere to turn the sound on 🔊</div>
+  <canvas id="confetti"></canvas>
+
+  <!-- AUDIO LOCAL -->
+  <audio id="music" src="music.mp3" loop></audio>
+
+  <script>
+    // Jouer la musique après le clic
+    const audio = document.getElementById("music");
+    document.body.addEventListener("click", () => { audio.play(); document.querySelector(".hint").style.display = "none"; });
+
+    // ❤️ HEART CONFETTI
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const hearts = [];
+    function createHeart() {
+      return {
+        x: Math.random()*canvas.width,
+        y: -20,
+        size: Math.random()*15+10,
+        speed: Math.random()*2+2,
+        drift: Math.random()*2-1,
+        color: `hsl(${Math.random()*360},80%,60%)`
+      };
+    }
+    for(let i=0;i<150;i++) hearts.push(createHeart());
+
+    function drawHeart(x,y,size,color){
+      ctx.save();
+      ctx.translate(x,y);
+      ctx.scale(size/20,size/20);
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.bezierCurveTo(-10,-10,-20,5,0,20);
+      ctx.bezierCurveTo(20,5,10,-10,0,0);
+      ctx.fillStyle=color;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      hearts.forEach(h=>{
+        drawHeart(h.x,h.y,h.size,h.color);
+        h.y+=h.speed;
+        h.x+=h.drift;
+        if(h.y>canvas.height+20) Object.assign(h,createHeart());
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
